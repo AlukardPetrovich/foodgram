@@ -1,17 +1,17 @@
+from api.filters import ResipeFilter
+from api.permissions import IsAuthor, ReadOnly
+from api.serializers import (FollowUnfollowSerializer, IngredientSerializer,
+                             ReadRecipeSerializer, TagSerializer,
+                             WriteRecipeSerializer)
+from api.utils import add_or_remove_from_list
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingList, Tag
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
-from api.filters import ResipeFilter
-from api.permissions import IsAuthor, ReadOnly
-from api.serializers import (FollowUnfollowSerializer, IngredientSerializer,
-                             RecipeSerializer, ShortRecipeSerializer,
-                             TagSerializer)
-from recipes.models import Favorites, Ingredient, Recipe, ShoppingList, Tag
 from users.models import Follow, User
 
 
@@ -27,24 +27,17 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [ReadOnly, ]
 
 
-def add_or_remove_from_list(list_model, request, pk):
-    user = request.user
-    recipe = get_object_or_404(Recipe, id=pk)
-    if request.method == 'POST':
-        list_model.objects.create(user=user, recipe=recipe)
-        serializer = ShortRecipeSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    if request.method == 'DELETE':
-        list_model.objects.filter(user=user, recipe=recipe).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
+    serializer_class = WriteRecipeSerializer
+
     permission_classes = [IsAuthor | ReadOnly]
     filterset_class = ResipeFilter
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST', 'PATCH']:
+            return WriteRecipeSerializer
+        return ReadRecipeSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -56,7 +49,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthor, ]
     )
     def favorite_endpoint(self, request, pk):
-        return add_or_remove_from_list(Favorites, request, pk)
+        return add_or_remove_from_list(Favorite, request, pk)
 
     @action(
         detail=True,
@@ -79,22 +72,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'recipe__ingredients__name',
             'recipe__ingredients__measurement_unit'
         ).annotate(
-            total_amount=Sum('recipe__recipeingredients__amount')
+            total_amount=Sum('recipe__recipeingredient__amount')
         )
-        with open('shopping_list.txt', 'w') as file:
-            for ingredient in list:
-                file.write(
-                    ingredient['recipe__ingredients__name'] + ' ' +
-                    str(ingredient['total_amount']) + ' ' +
-                    ingredient['recipe__ingredients__measurement_unit'] +
-                    '\n'
-                )
-        with open('shopping_list.txt', 'r') as file:
-            file.seek(0)
-            response = HttpResponse(file.read(), content_type='text/plain')
-            response['Content-Disposition'] = ('attachment;'
-                                               'filename=shopping_list.txt')
-            return response
+        data = []
+        for line in list:
+            name = line['recipe__ingredients__name']
+            amount = line['total_amount']
+            measurement_unit = line['recipe__ingredients__measurement_unit']
+            data.append(f'{name}, {amount} {measurement_unit}')
+        response_context = '\n'.join(data)
+        response = HttpResponse(response_context, content_type='text/plain')
+        response['Content-Disposition'] = ('attachment;'
+                                           'filename=shopping_list.txt')
+        return response
 
 
 class FollowUnfollowViewSet(UserViewSet):

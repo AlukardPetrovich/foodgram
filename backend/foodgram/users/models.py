@@ -3,7 +3,6 @@ from django.db import models
 
 
 class User(AbstractUser):
-    id = models.AutoField(primary_key=True)
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
@@ -20,7 +19,6 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
-    id = models.AutoField(primary_key=True)
     following = models.ForeignKey(
         User,
         related_name='following',
