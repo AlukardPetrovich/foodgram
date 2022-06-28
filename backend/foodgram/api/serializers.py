@@ -5,8 +5,10 @@ from api.utils import add_ingredients_and_tags
 from django.contrib.auth.hashers import make_password
 from django.forms import ValidationError
 from djoser.serializers import UserSerializer
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            RecipeTag, ShoppingList, Tag)
+from recipes.models import (
+    Favorite, Ingredient, Recipe, RecipeIngredient, RecipeTag, ShoppingList,
+    Tag,
+)
 from rest_framework import serializers, validators
 from users.models import Follow, User
 

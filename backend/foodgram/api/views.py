@@ -1,8 +1,9 @@
 from api.filters import ResipeFilter
 from api.permissions import IsAuthor, ReadOnly
-from api.serializers import (FollowUnfollowSerializer, IngredientSerializer,
-                             ReadRecipeSerializer, TagSerializer,
-                             WriteRecipeSerializer)
+from api.serializers import (
+    FollowUnfollowSerializer, IngredientSerializer, ReadRecipeSerializer,
+    TagSerializer, WriteRecipeSerializer,
+)
 from api.utils import add_or_remove_from_list
 from django.db.models import Sum
 from django.http import HttpResponse
