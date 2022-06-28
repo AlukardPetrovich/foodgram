@@ -9,7 +9,6 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 AUTH_USER_MODEL = 'users.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-# Application definition
 
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
