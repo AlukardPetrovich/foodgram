@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
-from recipes.models import Recipe, RecipeIngredient, RecipeTag
 from rest_framework import status
 from rest_framework.response import Response
 
 from api.serializers import ShortRecipeSerializer
+from recipes.models import Recipe, RecipeIngredient, RecipeTag
 
 
 def add_ingredients_and_tags(recipe, ingredients, tags):
