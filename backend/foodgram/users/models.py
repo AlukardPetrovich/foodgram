@@ -24,13 +24,13 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='автор рецепта',
         on_delete=models.CASCADE
-        )
+    )
     follower = models.ForeignKey(
         User,
         related_name='follower',
         verbose_name='читатель рецепта',
         on_delete=models.CASCADE
-        )
+    )
 
     class Meta:
         verbose_name = 'Подписка'
