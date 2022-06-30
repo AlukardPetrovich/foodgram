@@ -24,7 +24,7 @@ class RecipeIngredient(models.Model):
         related_name='recipe_ingredient',
         verbose_name='Ингредиент',
         on_delete=models.PROTECT
-        )
+    )
     amount = models.IntegerField(
         verbose_name='Количество ингредиента',
         default=0,
