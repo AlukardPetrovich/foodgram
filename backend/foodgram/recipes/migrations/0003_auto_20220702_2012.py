@@ -22,8 +22,9 @@ def add_ingredients_in_db(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0002_initial'),
+        ('recipes', '0002_auto_20220702_2009'),
     ]
+
 
     operations = [
         migrations.RunPython(add_ingredients_in_db),

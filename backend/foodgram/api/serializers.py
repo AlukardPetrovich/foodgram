@@ -3,9 +3,9 @@ import re
 from django.contrib.auth.hashers import make_password
 from django.forms import ValidationError
 from djoser.serializers import UserSerializer
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, validators
 
-from api.fields import CustomImageField
 from api.utils import add_ingredients_and_tags
 from recipes.models import (
     Favorite, Ingredient, Recipe, RecipeIngredient, RecipeTag, ShoppingList,
@@ -81,7 +81,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
-    image = CustomImageField()
+    image = Base64ImageField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -131,7 +131,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         source='recipeingredient_set'
     )
     tags = TagSerializer(many=True)
-    image = CustomImageField()
+    image = Base64ImageField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -223,7 +223,10 @@ class FollowUnfollowSerializer(serializers.ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        return True
+        return Follow.objects.filter(
+            follower=self.context.get('request').user,
+            following=obj
+        ).exists()
 
     def get_recipes(self, obj):
         recipes = Recipe.objects.filter(author=obj)

@@ -1,24 +1,23 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, site
 
 from recipes import models
 
 
-class RecipeAdmin(admin.ModelAdmin):
+class RecipeAdmin(ModelAdmin):
     list_display = ('name', 'author', )
     fields = ('name', 'author', 'text', 'image',
               'cooking_time', 'in_favorite',)
     readonly_fields = ('in_favorite', )
     list_filter = ('name', 'author', 'tags')
 
-    @admin.display(description='How many times in favorites')
     def in_favorite(self, obj):
         return models.Favorite.objects.filter(recipe=obj).count()
 
 
-admin.site.register(models.Tag)
-admin.site.register(models.Recipe, RecipeAdmin)
-admin.site.register(models.RecipeIngredient)
-admin.site.register(models.ShoppingList)
-admin.site.register(models.Ingredient)
-admin.site.register(models.Favorite)
-admin.site.register(models.RecipeTag)
+site.register(models.Tag)
+site.register(models.Recipe, RecipeAdmin)
+site.register(models.RecipeIngredient)
+site.register(models.ShoppingList)
+site.register(models.Ingredient)
+site.register(models.Favorite)
+site.register(models.RecipeTag)

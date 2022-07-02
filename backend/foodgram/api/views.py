@@ -6,7 +6,7 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.filters import ResipeFilter
+from api.filters import IngredientFilter, ResipeFilter
 from api.permissions import IsAuthor, ReadOnly
 from api.serializers import (
     FollowUnfollowSerializer, IngredientSerializer, ReadRecipeSerializer,
@@ -21,6 +21,8 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [ReadOnly, ]
+    filterset_class = IngredientFilter
+    # pagination_class = None
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,7 +34,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = WriteRecipeSerializer
-
     permission_classes = [IsAuthor | ReadOnly]
     filterset_class = ResipeFilter
 
@@ -105,9 +106,24 @@ class FollowUnfollowViewSet(UserViewSet):
         following = get_object_or_404(User, id=id)
         if request.method == 'POST':
             Follow.objects.create(follower=user, following=following)
-            serializer = FollowUnfollowSerializer(following)
+            serializer = FollowUnfollowSerializer(
+                following, context={'request': request}
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         if request.method == 'DELETE':
             Follow.objects.filter(follower=user, following=following).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(
+        detail=False,
+        url_path='subscriptions',
+        permission_classes=[IsAuthor, ],
+    )
+    def subscriptions_endpoint(self, request):
+        subscriptions = User.objects.filter(following__follower=request.user)
+        queryset = self.paginate_queryset(subscriptions)
+        serializer = FollowUnfollowSerializer(
+            queryset, many=True, context={'request': request}
+        )
+        return self.get_paginated_response(serializer.data)
