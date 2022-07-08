@@ -48,7 +48,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=['post', 'delete'],
         url_path='favorite',
-        permission_classes=[IsAuthor, ]
+        permission_classes=[IsAuthor, ],
+        filterset_class=ResipeFilter
     )
     def favorite_endpoint(self, request, pk):
         return add_or_remove_from_list(Favorite, request, pk)
