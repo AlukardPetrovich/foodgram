@@ -24,7 +24,7 @@ class ModifiedDjoserUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         try:
-            user = self.context['request'].user
+            user = self.context.get('request').user
         except KeyError:
             return False
         return Follow.objects.filter(follower=user, following=obj).exists()

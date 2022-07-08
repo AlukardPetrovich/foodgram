@@ -22,7 +22,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = [ReadOnly, ]
     filterset_class = IngredientFilter
-    # pagination_class = None
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
