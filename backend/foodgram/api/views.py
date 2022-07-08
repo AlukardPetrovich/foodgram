@@ -56,8 +56,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=['post', 'delete'],
         url_path='favorite',
-        permission_classes=[IsAuthor | ReadOnly],
-        # filterset_class=ResipeFilter
+        permission_classes=[IsAuthor, ],
     )
     def favorite_endpoint(self, request, pk):
         return add_or_remove_from_list(Favorite, request, pk)
@@ -66,7 +65,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=['post', 'delete'],
         url_path='shopping_cart',
-        permission_classes=[IsAuthor | ReadOnly]
+        permission_classes=[IsAuthor, ]
     )
     def shoping_list_endpoint(self, request, pk):
         return add_or_remove_from_list(ShoppingList, request, pk)
@@ -107,7 +106,7 @@ class FollowUnfollowViewSet(UserViewSet):
         detail=False,
         methods=['post', 'delete'],
         url_path=r'(?P<id>\d+)/subscribe',
-        permission_classes=[IsAuthor | ReadOnly]
+        permission_classes=[IsAuthor, ]
     )
     def follow_unfollow_endpoint(self, request, id):
         user = request.user
@@ -126,7 +125,7 @@ class FollowUnfollowViewSet(UserViewSet):
     @action(
         detail=False,
         url_path='subscriptions',
-        permission_classes=[IsAuthor | ReadOnly],
+        permission_classes=[IsAuthor, ],
     )
     def subscriptions_endpoint(self, request):
         subscriptions = User.objects.filter(following__follower=request.user)
