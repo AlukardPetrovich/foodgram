@@ -17,12 +17,12 @@ class ResipeFilter(django_filters.FilterSet):
     is_favorited = django_filters.BooleanFilter(
         field_name='is_favorited',
         method='favorite_filter',
-        widget=BooleanWidget
+        widget=BooleanWidget()
     )
     is_in_shopping_cart = django_filters.BooleanFilter(
         field_name='is_in_shopping_cart',
         method='shopping_cart_filter',
-        widget=BooleanWidget
+        widget=BooleanWidget()
     )
     tags = django_filters.AllValuesMultipleFilter(field_name='tags__slug')
 
@@ -38,4 +38,4 @@ class ResipeFilter(django_filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author', )
+        fields = ('tags', 'author',)

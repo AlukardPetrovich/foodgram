@@ -1,3 +1,5 @@
+
+from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -32,14 +34,20 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = WriteRecipeSerializer
+    # serializer_class = WriteRecipeSerializer
     permission_classes = [IsAuthor | ReadOnly]
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = ResipeFilter
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PATCH']:
             return WriteRecipeSerializer
         return ReadRecipeSerializer
+
+    # def get_serializer_context(self):
+    #     context = super().get_serializer_context()
+    #     context.update({'request': self.request})
+    #     return context
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -49,7 +57,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post', 'delete'],
         url_path='favorite',
         permission_classes=[IsAuthor, ],
-        filterset_class=ResipeFilter
+        # filterset_class=ResipeFilter
     )
     def favorite_endpoint(self, request, pk):
         return add_or_remove_from_list(Favorite, request, pk)
