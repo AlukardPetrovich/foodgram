@@ -90,6 +90,11 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'tags', 'name', 'text', 'ingredients',
                   'is_favorited', 'is_in_shopping_cart', 'image',
                   'cooking_time')
+        # validators = [
+        #     validators.UniqueValidator(
+        #         queryset=RecipeIngredient.objects.all()
+        #     )
+        # ]
 
     def get_author(self, obj):
         serializer = ModifiedDjoserUserSerializer(read_only=True)
@@ -105,7 +110,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         return (
-            user.is_authentikated
+            user.is_authenticated
             and ShoppingList.objects.filter(user=user, recipe=obj).exists()
         )
 
@@ -124,6 +129,16 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         RecipeTag.objects.filter(recipe=instance).delete()
         add_ingredients_and_tags(instance, ingredients, tags)
         return instance
+
+    def validate_ingredients(self, value):
+        valid_ingredients = []
+        for ing in value:
+            if ing in valid_ingredients:
+                raise serializers.ValidationError(
+                    'Задайте ингредиент одной строкой с общим количеством'
+                )
+            valid_ingredients.append(ing)
+        return valid_ingredients
 
 
 class ReadRecipeSerializer(serializers.ModelSerializer):

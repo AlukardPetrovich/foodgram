@@ -45,12 +45,12 @@ jobs:
           context: ./backend/foodgram
           push: true
           tags: thisispetrovich/foodgram_backend
-      # - name: Push to Docker Hub frontend
-      #   uses: docker/build-push-action@v2 
-      #   with:
-      #     context: ./frontend
-      #     push: true
-      #     tags: thisispetrovich/foodgram_frontend
+      - name: Push to Docker Hub frontend
+        uses: docker/build-push-action@v2 
+        with:
+          context: ./frontend
+          push: true
+          tags: thisispetrovich/foodgram_frontend
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
@@ -63,11 +63,11 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          sudo docker pull thisispetrovich/foodgram_backend
+          sudo docker pull thisispetrovich/foodgram_backend:latest
           sudo docker pull thisispetrovich/foodgram_frontend
           sudo docker compose stop
-          sudo docker compose rm backend
-          sudo docker compose rm frontend
+          sudo docker compose rm foodgram_backend
+          sudo docker compose rm foodgram_frontend
           rm .env
           touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env

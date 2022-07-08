@@ -23,6 +23,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [ReadOnly, ]
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = IngredientFilter
 
 
@@ -51,6 +52,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer_class()
+    #     serializer.is_valid(self, raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True,
