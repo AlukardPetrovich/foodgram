@@ -92,7 +92,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
                   'cooking_time')
 
     def get_author(self, obj):
-        serializer = ModifiedDjoserUserSerializer(obj.author)
+        serializer = ModifiedDjoserUserSerializer(read_only=True)
         return serializer.data
 
     def get_is_favorited(self, obj):
@@ -125,7 +125,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
 
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField()
+    author = ModifiedDjoserUserSerializer(read_only=True)
     ingredients = RecipeIngredientsSerializer(
         many=True,
         source='recipeingredient_set'
@@ -140,10 +140,6 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'tags', 'name', 'text', 'ingredients',
                   'is_favorited', 'is_in_shopping_cart', 'image',
                   'cooking_time')
-
-    def get_author(self, obj):
-        serializer = ModifiedDjoserUserSerializer(obj.author)
-        return serializer.data
 
     def get_is_favorited(self, obj):
         return Favorite.objects.filter(
