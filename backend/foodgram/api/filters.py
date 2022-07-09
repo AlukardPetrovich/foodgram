@@ -27,8 +27,6 @@ class ResipeFilter(django_filters.FilterSet):
     tags = django_filters.AllValuesMultipleFilter(field_name='tags__slug')
 
     def favorite_filter(self, queryset, name, value):
-        print(queryset)
-        print(value)
         if value and not self.request.user.is_anonymous:
             return queryset.filter(favorite__user=self.request.user)
         return queryset

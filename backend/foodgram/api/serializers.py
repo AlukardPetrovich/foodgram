@@ -131,14 +131,16 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         return instance
 
     def validate_ingredients(self, value):
-        valid_ingredients = []
+        used_ingredients = []
         for ing in value:
-            if ing in valid_ingredients:
+            if ing['ingredient'] in used_ingredients:
+                wrong_ingredient = ing['ingredient'].name
                 raise serializers.ValidationError(
-                    'Задайте ингредиент одной строкой с общим количеством'
+                    f'Задайте ингредиент {wrong_ingredient} одной строкой с'
+                    ' общим количеством'
                 )
-            valid_ingredients.append(ing)
-        return valid_ingredients
+            used_ingredients.append(ing['ingredient'])
+        return value
 
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
