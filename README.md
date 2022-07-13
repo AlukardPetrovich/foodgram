@@ -1,4 +1,4 @@
-![test_and_deploy](https://github.com/AlukardPetrovich/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
+![test_and_deploy](https://github.com/AlukardPetrovich/foodgram-project-react/actions/workflows/foodgram_deploy_workflow.yml/badge.svg)
 
 # project "Foodgram"
 
