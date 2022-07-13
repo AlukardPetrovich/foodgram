@@ -5,6 +5,10 @@ from recipes.models import Ingredient, Recipe
 
 
 class IngredientFilter(django_filters.FilterSet):
+    """
+    Фильтрсет для поиска названию ингредиента
+    """
+
     name = django_filters.CharFilter(lookup_expr='istartswith')
 
     class Meta:
@@ -13,6 +17,10 @@ class IngredientFilter(django_filters.FilterSet):
 
 
 class ResipeFilter(django_filters.FilterSet):
+    """
+    Фильтрсет для фильтрации рецептов по тэгам, нахождению в избранном и
+    нахождению в списке покупок.
+    """
 
     is_favorited = django_filters.BooleanFilter(
         field_name='is_favorited',

@@ -15,6 +15,11 @@ from users.models import Follow, User
 
 
 class ModifiedDjoserUserSerializer(UserSerializer):
+    """
+    Сериализатор для модели User. Наследуется от сериализатора из
+    библиотеки Djoser, расширен полем отображающим статус подписки
+    """
+
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -31,6 +36,9 @@ class ModifiedDjoserUserSerializer(UserSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор ингредиентов
+    """
 
     class Meta:
         model = Ingredient
@@ -38,6 +46,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор тэгов
+    """
+
     name = serializers.ReadOnlyField()
     color = serializers.CharField()
     slug = serializers.SlugField()
@@ -47,16 +59,11 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug',)
 
 
-class RecipeTagSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all())
-    name = serializers.ReadOnlyField(source='tag.name')
-
-    class Meta:
-        model = RecipeTag
-        fields = ('id', 'name')
-
-
 class RecipeIngredientsSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор промежуточной модели связующий ингредиенты и рецепты
+    """
+
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         source='ingredient'
@@ -72,6 +79,9 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 
 
 class WriteRecipeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания рецептов
+    """
     author = serializers.SerializerMethodField()
     ingredients = RecipeIngredientsSerializer(
         many=True,
@@ -90,11 +100,6 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'tags', 'name', 'text', 'ingredients',
                   'is_favorited', 'is_in_shopping_cart', 'image',
                   'cooking_time')
-        # validators = [
-        #     validators.UniqueValidator(
-        #         queryset=RecipeIngredient.objects.all()
-        #     )
-        # ]
 
     def get_author(self, obj):
         serializer = ModifiedDjoserUserSerializer(read_only=True)

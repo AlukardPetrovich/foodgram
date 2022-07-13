@@ -57,18 +57,3 @@ sudo docker exec  <name или id контейнера backend> python manage.py
 
 ## Доступность проекта
 На текущий момент проект запущен и [доступен](http://foodgram.ddns.net/signin)
-
-Также доступна [админка](http://foodgram.ddns.net/admin/login/?next=/admin/)
-
-Данные для входа в админку:
-Login:
-```
-Super
-```
-Password:
-```
-posma2-Gumgeg-gumrer
-```
-
-
-
