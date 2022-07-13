@@ -17,7 +17,7 @@ from users.models import Follow, User
 class ModifiedDjoserUserSerializer(UserSerializer):
     """
     Сериализатор для модели User. Наследуется от сериализатора из
-    библиотеки Djoser, расширен полем отображающим статус подписки
+    библиотеки Djoser, расширен полем отображающим статус подписки.
     """
 
     is_subscribed = serializers.SerializerMethodField()
@@ -37,7 +37,7 @@ class ModifiedDjoserUserSerializer(UserSerializer):
 
 class IngredientSerializer(serializers.ModelSerializer):
     """
-    Сериализатор ингредиентов
+    Сериализатор ингредиентов.
     """
 
     class Meta:
@@ -47,7 +47,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class TagSerializer(serializers.ModelSerializer):
     """
-    Сериализатор тэгов
+    Сериализатор тэгов.
     """
 
     name = serializers.ReadOnlyField()
@@ -61,7 +61,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientsSerializer(serializers.ModelSerializer):
     """
-    Сериализатор промежуточной модели связующий ингредиенты и рецепты
+    Сериализатор промежуточной модели связующий ингредиенты и рецепты.
     """
 
     id = serializers.PrimaryKeyRelatedField(
@@ -80,7 +80,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 
 class WriteRecipeSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для создания рецептов
+    Сериализатор для создания рецептов.
     """
     author = serializers.SerializerMethodField()
     ingredients = RecipeIngredientsSerializer(
@@ -149,6 +149,10 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
 
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для отображения рецептов.
+    """
+
     author = ModifiedDjoserUserSerializer(read_only=True)
     ingredients = RecipeIngredientsSerializer(
         many=True,
@@ -181,6 +185,10 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для отображения рецептов.
+    Версия с уменьшенным количеством полей.
+    """
 
     class Meta:
         model = Recipe
@@ -188,6 +196,10 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для регистрации новых пользователей.
+    """
+
     email = serializers.EmailField(
         max_length=254,
         validators=[validators.UniqueValidator(queryset=User.objects.all())]
@@ -225,14 +237,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
 
 
-class FollowSerializer(serializers.Serializer):
-
-    class Meta:
-        model = Follow
-        fields = ('foloowing')
-
-
 class FollowUnfollowSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор подписок.
+    """
+
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()

@@ -7,6 +7,10 @@ from recipes.models import Recipe, RecipeIngredient, RecipeTag
 
 
 def add_ingredients_and_tags(recipe, ingredients, tags):
+    """
+    Функция привязывающая к рецепту ингредиенты и теги
+    при создании или обновлении рецепта.
+    """
     recipeingredients = [
         RecipeIngredient(
             recipe=recipe,
@@ -25,6 +29,10 @@ def add_ingredients_and_tags(recipe, ingredients, tags):
 
 
 def add_or_remove_from_list(list_model, request, pk):
+    """
+    Функция добавляющая или удаляющая связь рецепта с пользователем
+    в избранном или в списке покупок.
+    """
     user = request.user
     recipe = get_object_or_404(Recipe, id=pk)
     if request.method == 'POST':

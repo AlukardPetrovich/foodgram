@@ -20,6 +20,10 @@ from users.models import Follow, User
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Вьюсет для ингредиентов.
+    """
+
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [ReadOnly, ]
@@ -28,14 +32,21 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Вьюсет для тегов.
+    """
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [ReadOnly, ]
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет для рецептов.
+    """
+
     queryset = Recipe.objects.all()
-    # serializer_class = WriteRecipeSerializer
     permission_classes = [IsAuthor | ReadOnly]
     filter_backends = (DjangoFilterBackend, )
     filterset_class = ResipeFilter
@@ -45,20 +56,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return WriteRecipeSerializer
         return ReadRecipeSerializer
 
-    # def get_serializer_context(self):
-    #     context = super().get_serializer_context()
-    #     context.update({'request': self.request})
-    #     return context
-
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer_class()
-    #     serializer.is_valid(self, raise_exception=True)
-    #     serializer.save()
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+    """
+    Эндпойнт для работы с избранным.
+    """
     @action(
         detail=True,
         methods=['post', 'delete'],
@@ -68,6 +71,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite_endpoint(self, request, pk):
         return add_or_remove_from_list(Favorite, request, pk)
 
+    """
+    Эндпойнт для управления списком покупок.
+    """
     @action(
         detail=True,
         methods=['post', 'delete'],
@@ -77,6 +83,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shoping_list_endpoint(self, request, pk):
         return add_or_remove_from_list(ShoppingList, request, pk)
 
+    """
+    Эндпойнт для скачивания списка покупок.
+    """
     @action(
         detail=False,
         url_path='download_shopping_cart',
@@ -105,10 +114,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class FollowUnfollowViewSet(UserViewSet):
+    """
+    Вьюсет для управления подписками.
+    """
+
     queryset = User.objects.all()
     serializer_class = FollowUnfollowSerializer
     permission_classes = [permissions.IsAuthenticated, ]
 
+    """
+    Эндпойнт для добавления и удаления подписок.
+    """
     @action(
         detail=False,
         methods=['post', 'delete'],
@@ -129,6 +145,9 @@ class FollowUnfollowViewSet(UserViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    """
+    Эндпойнт для просмотра списка подписок.
+    """
     @action(
         detail=False,
         url_path='subscriptions',
