@@ -55,5 +55,4 @@ sudo docker exec  <name или id контейнера backend> python manage.py
 sudo docker exec  <name или id контейнера backend> python manage.py createsuperuser
 ```
 
-## Доступность проекта
-На текущий момент проект запущен и [доступен](http://foodgram.ddns.net/signin)
+
